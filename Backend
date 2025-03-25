@@ -1,0 +1,34 @@
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+const PORT = 5000;
+app.use(cors());
+app.use(express.json());
+
+let wasteLogs = [];
+
+const suggestions = {
+  Plastic: "Recycle plastic waste at the nearest recycling center.",
+  Paper: "Reuse or recycle paper waste.",
+  Organic: "Compost organic waste to make fertilizer.",
+  Glass: "Recycle glass at a designated center.",
+  Metal: "Sell scrap metal for recycling."
+};
+
+// Get all waste logs
+app.get("/api/waste", (req, res) => {
+  res.json(wasteLogs);
+});
+
+// Add a new waste log
+app.post("/api/waste", (req, res) => {
+  const type = req.body.type;
+  const suggestion = suggestions[type] || "Dispose of responsibly.";
+  wasteLogs.push({ type, suggestion });
+  res.json(wasteLogs);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
