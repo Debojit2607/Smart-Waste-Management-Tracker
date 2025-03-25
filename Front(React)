@@ -1,0 +1,47 @@
+import React, { useEffect, useState } from "react";
+
+const WasteTracker = () => {
+  const [wasteLogs, setWasteLogs] = useState([]);
+  const [wasteType, setWasteType] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/waste")
+      .then((res) => res.json())
+      .then((data) => setWasteLogs(data));
+  }, []);
+
+  const addWasteLog = () => {
+    fetch("http://localhost:5000/api/waste", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: wasteType })
+    })
+    .then((res) => res.json())
+    .then((data) => setWasteLogs(data));
+
+    setWasteType("");
+  };
+
+  return (
+    <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Smart Waste Tracker</h1>
+      <input
+        type="text"
+        value={wasteType}
+        onChange={(e) => setWasteType(e.target.value)}
+        className="border p-2 rounded w-full mb-2"
+        placeholder="Enter waste type (Plastic, Paper, Organic, etc.)"
+      />
+      <button onClick={addWasteLog} className="bg-green-500 text-white px-4 py-2 rounded">Log Waste</button>
+      <ul className="mt-4">
+        {wasteLogs.map((log, index) => (
+          <li key={index} className="p-2 border rounded mt-2">
+            {log.type} - {log.suggestion}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default WasteTracker;
